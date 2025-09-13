@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    env_file:
+      - ../api/.env.example
+    environment:
+      - APP_ENV=prod
+      - APP_ORIGINS=http://localhost:3000
+    ports:
+      - "8000:8000"
+    volumes:
+      - api_data:/app/data
+
+  web:
+    build:
+      context: ../web
+      dockerfile: Dockerfile
+    environment:
+      - NEXT_PUBLIC_API_BASE=http://api:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  api_data:
+    driver: local
+
